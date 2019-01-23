@@ -165,7 +165,9 @@ border-radius: 100px;
 .mrlp5 {
     margin-left: 0.5rem;
 }
-
+.mrrp5 {
+    margin-right: 0.5rem;
+}
 .mrlp5w10 {
     margin-left: 0.5rem;
     width: 10rem;

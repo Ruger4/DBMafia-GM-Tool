@@ -6,35 +6,38 @@
     </head>
     <body>
         <div class="container">
+            <div class="dragBar">
+                <div class="titleCSS">Ruger's DBMafia GM Tool</div>
+                <div class="minimCSS" id="minimize">-</div>
+                <div class="closeCSS" id="close">X</div>
+            </div>
             <form>
                 <div class = "cons-div flex-row">
-                    <div class = "text-White mrlp5 fg1">Console</div>
-                    <input type="text" id="console" class = "form mrlp5w10 fg2" autofocus>
-                    <button class = "btn btn-run mrlp5 fg1" id="consButton" type="submit">Execute</button>
+                    <div class = "text-White mrlp5 mrrp5">Console:</div>
+                    <input type="text" id="console" class = "form fg2" autofocus>
+                    <button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" type="submit">Execute</button>
                 </div>
             </form>
         </div>
 
         <script>
             const electron = require('electron');
-            //const {ipcRenderer} = electron;
+            const {ipcRenderer} = electron;
 
             const form = document.querySelector('#console');
             form.addEventListener('submit', submitForm);
             form.addEventListener("keyup", function(event) {
-                console.log("blarp")
                 event.preventDefault();
                 if (event.keyCode === 13) document.getElementById("consButton").click();
             });
 
-            function submitForm(e){
-                console.log("bleh")
-                e.preventDefault();
+            function submitForm(event){
+                event.preventDefault();
                 const form = document.querySelector('#console');
-                console.log(form.value)
-                //ipcRenderer.send('consoleString', form.value);
+                ipcRenderer.send('consoleString', form.value);
                 form.value = '';
             }
         </script>
+        <script src="./assets/js/script.js"></script>
     </body>
 </html>

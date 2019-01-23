@@ -3,9 +3,9 @@ const url = require('url');
 const path = require('path');
 
 let win = null;
-let consoleWin = null;
+//let consoleWin = null;
 
-const{app, BrowserWindow, Menu} = electron;
+const{app, BrowserWindow, Menu, ipcMain} = electron;
 
 // SET ENV
 process.env.NODE_ENV = 'proto';
@@ -46,7 +46,14 @@ app.on('ready', function(){
     })
 });
 
-// Handle creat add window
+// Catch item:add
+ipcMain.on('consoleString', function(e, item){
+    alert(item)
+    //mainWindow.webContents.send('item:add',item);
+    //addWindow.close();
+})
+
+/*// Handle creat add window
 function createConsoleWin(){
     // Create new window
     consoleWin = new BrowserWindow({
@@ -64,7 +71,7 @@ function createConsoleWin(){
     consoleWin.on('close', function(){
         consoleWin = null;
     });
-}
+}*/
 
 // create menu template
 const mainMenuTemplate = [

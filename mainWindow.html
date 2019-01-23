@@ -42,6 +42,30 @@
                     </div>
                 </div>
                 <script type="text/javascript">
+                    const electron = require('electron');
+                    const url = require('url');
+                    const path = require('path');
+                    const BrowserWindow = electron.remote.BrowserWindow;
+                    let consoleWin = null;
+                    function createConsoleWin(){
+                        // Create new window
+                        consoleWin = new BrowserWindow({
+                            width: 440,
+                            height: 320,
+                            title: 'Console'//,
+                            //frame: false
+                        });
+                        // load html into window
+                        consoleWin.loadURL(url.format({
+                            pathname: path.join(__dirname, 'consoleWindow.html'),
+                            protocol:'file:',
+                            slashes: true
+                        }));
+                        // garbage collection handle
+                        consoleWin.on('close', function(){
+                            consoleWin = null;
+                        });
+                    }
                     playerSetup();
                 </script>
             </div>
