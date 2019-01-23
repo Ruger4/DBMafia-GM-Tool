@@ -1,0 +1,14 @@
+{
+  "name": "dbmafiagmtool",
+  "version": "1.0.0",
+  "description": "Dank Brigade Mafia GM Tool",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Ruger",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^3.0.9"
+  }
+}
