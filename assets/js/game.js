@@ -264,3 +264,7 @@ function executeActions() {
     gblMafiaKill.reset()
     gblMafiaKill2.reset()
 }
+
+function checkWinCondition() {
+    
+}
