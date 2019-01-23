@@ -11,31 +11,37 @@
                 <div class="minimCSS" id="minimize">-</div>
                 <div class="closeCSS" id="close">X</div>
             </div>
-            <form>
-                <div class = "cons-div flex-row">
-                    <div class = "text-White mrlp5 mrrp5">Console:</div>
-                    <input type="text" id="console" class = "form fg2" autofocus>
-                    <button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" type="submit">Execute</button>
+            <div class = "cons-div flex-row">
+                <div class = "text-White mrlp5 mrrp5">Console:</div>
+                <input type="text" id="console" class = "form fg2 mrrp5" autofocus>
+                <!--<button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" onclick='executeConsole()'>Execute</button>-->
+            </div>
+            <div class="ph glBorder">
+                <header class="cta cgl phHeader">Console Command List</Header>
+                <div class="cgl phText">
+                    Replace "[option]" with selection then hit enter.</br>
+                    Commands are not case sensitive.</br>
+                    </br>
+                    Give [Player] [Gun / Armour / Report / Bread / Moonshine / Evidence]</br>
+                    Remove [Player] [Gun / Armour / Report / Bread / Moonshine / Evidence]</br>
+                    Alive [Player] [True / False]</br>
+                    Role [Player] [Role name (without spaces)]</br>
+                    Align [Player] [Village / Mafia / Nobody / Cult]</br>
                 </div>
-            </form>
+            </div>
         </div>
-
-        <script>
-            const electron = require('electron');
-            const {ipcRenderer} = electron;
-
+        <script>  
+            const {ipcRenderer} = require('electron');
+            ipcRenderer.on('console-function-return', (e, arg) => { document.getElementById("console").value = arg; })
             const form = document.querySelector('#console');
-            form.addEventListener('submit', submitForm);
             form.addEventListener("keyup", function(event) {
                 event.preventDefault();
-                if (event.keyCode === 13) document.getElementById("consButton").click();
+                if (event.keyCode === 13) executeConsole()//document.getElementById("consButton").click();
             });
-
-            function submitForm(event){
-                event.preventDefault();
-                const form = document.querySelector('#console');
-                ipcRenderer.send('consoleString', form.value);
-                form.value = '';
+            function executeConsole(){
+                var form = document.getElementById("console");
+                ipcRenderer.send('console-string', form.value);
+                form.value = "";
             }
         </script>
         <script src="./assets/js/script.js"></script>

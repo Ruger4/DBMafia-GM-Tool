@@ -25,7 +25,7 @@
                     </div>
                     <ol id="messageListID" class="ol nls"></ol>
                     <div class="game-div flex-row jcc">
-                        <button class="btn btn-add mrlp5 fg1" onclick="createConsoleWin()">Console</button>
+                        <button class="btn btn-add mrlp5 fg1" onclick='openConsole()'>Console</button>
                         <div id="gameHeaderDivID" class="text-Large fg100">text</div>
                     </div>
                     <ol id="VillageListID" class="ol nls"></ol>
@@ -42,30 +42,9 @@
                     </div>
                 </div>
                 <script type="text/javascript">
-                    const electron = require('electron');
-                    const url = require('url');
-                    const path = require('path');
-                    const BrowserWindow = electron.remote.BrowserWindow;
-                    let consoleWin = null;
-                    function createConsoleWin(){
-                        // Create new window
-                        consoleWin = new BrowserWindow({
-                            width: 440,
-                            height: 320,
-                            title: 'Console'//,
-                            //frame: false
-                        });
-                        // load html into window
-                        consoleWin.loadURL(url.format({
-                            pathname: path.join(__dirname, 'consoleWindow.html'),
-                            protocol:'file:',
-                            slashes: true
-                        }));
-                        // garbage collection handle
-                        consoleWin.on('close', function(){
-                            consoleWin = null;
-                        });
-                    }
+                    const {ipcRenderer} = require('electron');
+                    function openConsole(){ ipcRenderer.send('request-console-window') }
+                    ipcRenderer.on('console-string', (e, arg) => { console.log(arg) })
                     playerSetup();
                 </script>
             </div>

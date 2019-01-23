@@ -138,3 +138,81 @@ Array.prototype.lowest = function() {
     if(lowest === x) return false
     return lowest
 }
+
+function executeConsoleCommand(string){
+    //var errorField = document.getElementById("consoleErrorFieldID");
+    const {ipcRenderer} = require('electron');
+    var input = string;//document.getElementById("consoleID").value;
+    input = input.split(" ");
+    var i = input.length;
+    while (i--) {
+        input[i] = input[i].charAt(0).toUpperCase() + input[i].slice(1);
+    }
+    var action = input[0];
+    var player = input[1];
+    var value = input[2];
+
+    if(gblPlayerList.filter((plr) => plr === player).length < 1){
+        //errorField.innerText = "ERROR: " +player+ " is an unknown player."
+        ipcRenderer.send('console-function-return', "ERROR: " +player+ " is an unknown player.")
+        return
+    }
+
+    switch (action) {
+        case "Give":
+            if(nsItems.filter((item) => item === value).length < 1){
+                ipcRenderer.send('console-function-return', "ERROR: " +value+ " is an unknown item.")
+                return
+            }
+            gblPlayerDictionary[player].addItem = value;
+            gblMessageManager.addItemMsg(player, value)
+            gblMessageManager.push(new Message("!GameLog", player + " was given " + value + " by GM console." ))
+            break;
+        case "Remove":
+            if(nsItems.filter((item) => item === value).length < 1){
+                ipcRenderer.send('console-function-return', "ERROR: " +value+ " is an unknown item.")
+                return
+            }
+            gblPlayerDictionary[player].removeItem(value)
+            gblMessageManager.removeItemMsg(player, value)
+            gblMessageManager.push(new Message("!GameLog", player + " has " + value + " removed by GM console." ))
+            break;
+        case "Alive":
+            switch (value) {
+                case "True":
+                    gblPlayerDictionary[player].setAlive = true;
+                    gblMessageManager.push(new Message("!GameLog", player + " has been resurrected by GM console." ))
+                    break;
+                case "False":
+                    gblPlayerDictionary[player].setAlive = false;
+                    gblMessageManager.push(new Message("!GameLog", player + " has been killed by GM console." ))
+                    break;
+                default:
+                    ipcRenderer.send('console-function-return', "ERROR: " +value+ " is not True or False.")
+                    break;
+            } 
+            break;
+        case "Role":
+            var roleList = nsVillagers.clone().concat(nsMafia.clone(), nsThirds.clone());
+            if(roleList.filter((role) => role === value).length < 1){
+                ipcRenderer.send('console-function-return', "ERROR: " +value+ " is an unknown role.")
+                return
+            }
+            gblPlayerDictionary[player] = new nsRoles[value](player);
+            gblPlayerDictionary[player].init();
+            gblMessageManager.push(new Message("!GameLog", player + "'s role has been changed to " +value+ " by GM console." ))
+            break;
+        case "Align":
+            if(nsAlignment.filter((aln) => aln === value).length < 1){
+                ipcRenderer.send('console-function-return', "ERROR: " +value+ " is an unknown alignment.")
+                return
+            }
+            gblPlayerDictionary[player].setAlign = value;
+            gblMessageManager.push(new Message("!GameLog", player + "'s alignment has been changed to " +value+ " by GM console." ))
+            break;
+        default:
+            ipcRenderer.send('console-function-return', "ERROR: " +input[0]+ " is not a valid action.")
+            return
+    }
+    gblMessageManager.draw()
+}

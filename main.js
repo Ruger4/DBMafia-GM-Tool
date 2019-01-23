@@ -2,8 +2,8 @@ const electron = require('electron');
 const url = require('url');
 const path = require('path');
 
-let win = null;
-//let consoleWin = null;
+let mainWindow;
+let consoleWin;
 
 const{app, BrowserWindow, Menu, ipcMain} = electron;
 
@@ -14,25 +14,25 @@ process.env.NODE_ENV = 'proto';
 app.on('ready', function(){
     // Create new window
     if(process.env.NODE_ENV == 'production'){
-        win = new BrowserWindow({
+        mainWindow = new BrowserWindow({
             width: 680,
             height: 600,
             frame: false
         });
     } else {
-        win = new BrowserWindow({ 
+        mainWindow = new BrowserWindow({ 
             width: 680, 
             height: 600 
         });
     }
     // load html into window
-    win.loadURL(url.format({
+    mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'mainWindow.html'),
         protocol:'file:',
         slashes: true
     }));
     // Quit app when closed
-    win.on('closed', function(){
+    mainWindow.on('closed', function(){
         app.quit();
     });
 
@@ -41,26 +41,23 @@ app.on('ready', function(){
     // insert menu
     Menu.setApplicationMenu(mainMenu);
 
-    win.on('closed', () => {
-        win = null
+    mainWindow.on('closed', () => {
+        mainWindow = null;
+        consoleWin = null;
     })
 });
 
-// Catch item:add
-ipcMain.on('consoleString', function(e, item){
-    alert(item)
-    //mainWindow.webContents.send('item:add',item);
-    //addWindow.close();
-})
+ipcMain.on('console-string', (e, arg) => { mainWindow.webContents.send('console-string', arg) })
+ipcMain.on('console-function-return', (e, arg) => { consoleWin.webContents.send('console-function-return', arg) })
+ipcMain.on('request-console-window', (e) => { createConsoleWin() })
 
-/*// Handle creat add window
+// Handle creat add window
 function createConsoleWin(){
     // Create new window
-    consoleWin = new BrowserWindow({
-        width: 400,
-        height: 300,
-        title: 'Console'
-    });
+    consoleWin = new BrowserWindow({ width: 550, height: 330 });
+    consoleWin.title = "Console";
+    //consoleWin.setSize(1420,1300);
+    //consoleWin.setMinimumSize(1420,1300);
     // load html into window
     consoleWin.loadURL(url.format({
         pathname: path.join(__dirname, 'consoleWindow.html'),
@@ -71,7 +68,7 @@ function createConsoleWin(){
     consoleWin.on('close', function(){
         consoleWin = null;
     });
-}*/
+}
 
 // create menu template
 const mainMenuTemplate = [
