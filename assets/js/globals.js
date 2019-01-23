@@ -165,7 +165,6 @@ function executeConsoleCommand(string){
                 return
             }
             gblPlayerDictionary[player].addItem = value;
-            gblMessageManager.addItemMsg(player, value)
             gblMessageManager.push(new Message("!GameLog", player + " was given " + value + " by GM console." ))
             break;
         case "Remove":
@@ -174,7 +173,6 @@ function executeConsoleCommand(string){
                 return
             }
             gblPlayerDictionary[player].removeItem(value)
-            gblMessageManager.removeItemMsg(player, value)
             gblMessageManager.push(new Message("!GameLog", player + " has " + value + " removed by GM console." ))
             break;
         case "Alive":

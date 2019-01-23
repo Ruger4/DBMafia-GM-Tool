@@ -44,7 +44,7 @@
                 <script type="text/javascript">
                     const {ipcRenderer} = require('electron');
                     function openConsole(){ ipcRenderer.send('request-console-window') }
-                    ipcRenderer.on('console-string', (e, arg) => { console.log(arg) })
+                    ipcRenderer.on('console-string', (e, arg) => { executeConsoleCommand(arg) })
                     playerSetup();
                 </script>
             </div>

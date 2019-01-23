@@ -49,9 +49,17 @@ class MessageManager {
         this.itemMoving = [];
     }
     pendingCheck(){
-        document.getElementById("messageListID").childElementCount > 0 ?
-        document.getElementById("messengerDivID").style.display = "" :
-        document.getElementById("messengerDivID").style.display = "none";
+        if(document.getElementById("messageListID").childElementCount > 0){
+            document.getElementById("messengerDivID").style.display = "";
+            document.getElementById("gameFooterDivID").className = "text-Red"
+            document.getElementById("gameFooterDivID").innerText = "Perform and remove all pending actions to proceed."
+            document.getElementById("calculateButtonID").style.display = "none";
+        } else {
+            document.getElementById("messengerDivID").style.display = "none";
+            document.getElementById("gameFooterDivID").className = "text"
+            document.getElementById("gameFooterDivID").innerText = "Assign player requested actions then: "
+            document.getElementById("calculateButtonID").style.display = "";
+        }
     }
     renderConsoleLogs(){
         var renderloc = document.getElementById("gameLogID").lastElementChild.lastElementChild;

@@ -54,10 +54,8 @@ ipcMain.on('request-console-window', (e) => { createConsoleWin() })
 // Handle creat add window
 function createConsoleWin(){
     // Create new window
-    consoleWin = new BrowserWindow({ width: 550, height: 330 });
+    consoleWin = new BrowserWindow({ width: 550, height: 330, frame: false});
     consoleWin.title = "Console";
-    //consoleWin.setSize(1420,1300);
-    //consoleWin.setMinimumSize(1420,1300);
     // load html into window
     consoleWin.loadURL(url.format({
         pathname: path.join(__dirname, 'consoleWindow.html'),
