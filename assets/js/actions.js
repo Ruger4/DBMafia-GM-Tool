@@ -250,7 +250,7 @@ class Block extends Action {
                 break;
             case "Saboteur":
                 this.actionName = "Sabotage";
-                this.priorityValue = 34;
+                this.priorityValue = 100;
                 break;
             case "Virgin":
                 this.actionName = "Martyr";
@@ -317,8 +317,8 @@ class Block extends Action {
                 var lt = gblActionManager.filter((inv) => inv.constructor.name === "Investigate" && inv.getTarget === this.target);
                 if(lt.length > 0){
                     for(var i=0;i<lt.length;i++) {
-                        gblPlayerDictionary[lt[i]].addBlock = this.owner;
-                        gblMessageManager.push(new Message("!GameLog", this.owner + " has blocked "+ this.target +
+                        gblPlayerDictionary[lt[i].getOwner].addBlock = this.owner;
+                        gblMessageManager.push(new Message("!GameLog", this.owner + " has blocked "+ lt[i].getOwner +
                                                             "'s actions with legalese."))
                     }
                 }
@@ -345,7 +345,7 @@ class Sabotage extends Action {
         this.visitType = 0;
         this.selectable = false;
         this.isVisit = false;
-        this.priorityValue = 32;
+        this.priorityValue = 100;
         this.delayTrigger = 2;
         this.actionName = "Sabotage";
         this.target = target;
@@ -939,7 +939,7 @@ class Investigate extends Action {
                     arrived.remove(this.owner)
                     arrived.remove(ninja)
                 }
-                if(arrived) {
+                if(arrived && arrived.length > 0) {
                     gblMessageManager.push(new Message(this.owner, "Your target was visited by "+ arrived.toOrderedString() +" last night."))
                     gblMessageManager.push(new Message("!GameLog", this.owner + " watched "+ targ +" being visited by "+ arrived.toOrderedString() +"."))
                 } else {

@@ -95,7 +95,7 @@ class Player {
                     var j = guardList.length;
                     while (j--) { guardList[j].trigger(killer) }
                 }
-                return [false, ", but "+ this.name +" was protected by "+ protectList.toString() +"."]
+                return [false, ", but "+ this.name +" was protected by "+ protectList.toOrderedString() +"."]
             }
             gblActionManager.push(new Death(killer, this.name))
             this.killer = killer;
@@ -235,7 +235,7 @@ class Player {
         // push name to entry
         var name = document.createElement('div');
         name.className = "list-name";
-        name.innerText = this.name;
+        name.innerText = this.name === "!Mafia" || this.name === "!MafiaDouble" ? "" : this.name;
         entry.appendChild(name);
         // push role to entry
         var role = document.createElement('div');
