@@ -2,10 +2,9 @@ const electron = require('electron');
 const url = require('url');
 const path = require('path');
 
-let mainWindow;
-let consoleWin;
+let mainWindow, consoleWin, gameoverWin, quitWin;
 
-const{app, BrowserWindow, Menu, ipcMain} = electron;
+const{app, BrowserWindow, Menu, ipcMain, globalShortcut} = electron;
 
 // SET ENV
 process.env.NODE_ENV = 'proto';
@@ -22,7 +21,7 @@ app.on('ready', function(){
     } else {
         mainWindow = new BrowserWindow({ 
             width: 680, 
-            height: 600 
+            height: 600
         });
     }
     // load html into window
@@ -41,15 +40,24 @@ app.on('ready', function(){
     // insert menu
     Menu.setApplicationMenu(mainMenu);
 
+    globalShortcut.register('Escape', () => { 
+        if(!quitWin) createQuitWin()
+    })
+
     mainWindow.on('closed', () => {
         mainWindow = null;
         consoleWin = null;
+        gameoverWin = null;
+        quitWin = null;
     })
 });
 
 ipcMain.on('console-string', (e, arg) => { mainWindow.webContents.send('console-string', arg) })
 ipcMain.on('console-function-return', (e, arg) => { consoleWin.webContents.send('console-function-return', arg) })
-ipcMain.on('request-console-window', (e) => { createConsoleWin() })
+ipcMain.on('request-console-window', (e) => { if(!consoleWin) createConsoleWin() })
+ipcMain.on('request-gameover-window', (e, arg) => { if(!gameoverWin) createGameoverWin(arg) })
+ipcMain.on('return-to-playerlist', (e) => { mainWindow.webContents.send('return-to-playerlist') })
+ipcMain.on('quit-app', (e) => { app.quit() })
 
 // Handle creat add window
 function createConsoleWin(){
@@ -68,6 +76,41 @@ function createConsoleWin(){
     });
 }
 
+function createGameoverWin(arg){
+    // Create new window
+    gameoverWin = new BrowserWindow({ width: 400, height: 300, frame: false, parent: mainWindow});
+    gameoverWin.title = "Console";
+    // load html into window
+    gameoverWin.loadURL(url.format({
+        pathname: path.join(__dirname, 'gameoverWindow.html'),
+        protocol:'file:',
+        slashes: true
+    }));
+
+    gameoverWin.webContents.send('gameover-conditions', arg)
+
+    // garbage collection handle
+    gameoverWin.on('close', function(){
+        gameoverWin = null;
+    });
+}
+
+function createQuitWin(){
+    // Create new window
+    quitWin = new BrowserWindow({ width: 300, height: 60, frame: false, parent: mainWindow});
+    quitWin.title = "Console";
+    // load html into window
+    quitWin.loadURL(url.format({
+        pathname: path.join(__dirname, 'quitWindow.html'),
+        protocol:'file:',
+        slashes: true
+    }));
+    // garbage collection handle
+    quitWin.on('close', function(){
+        quitWin = null;
+    });
+}
+
 // create menu template
 const mainMenuTemplate = [
     {
@@ -77,7 +120,8 @@ const mainMenuTemplate = [
                 label: 'Quit',
                 accelerator: process.platform == 'darwin' ? 'command+Q' : 'Ctrl+Q',
                 click(){
-                    app.quit();
+                    //app.quit();
+                    createQuitWin()
                 }
             }
         ]

@@ -45,6 +45,7 @@
                     const {ipcRenderer} = require('electron');
                     function openConsole(){ ipcRenderer.send('request-console-window') }
                     ipcRenderer.on('console-string', (e, arg) => { executeConsoleCommand(arg) })
+                    ipcRenderer.on('return-to-playerlist', (e) => { returnToPlayerList() })
                     playerSetup();
                 </script>
             </div>

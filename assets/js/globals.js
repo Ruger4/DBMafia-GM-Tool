@@ -19,6 +19,30 @@ var gblGameCycles = 0;
 var gblMafiaKill = {};
 var gblMafiaKill2 = {};
 
+function returnToPlayerList(){
+    var list = document.getElementById('gameLogID');
+    while (list.firstChild) { list.removeChild(list.firstChild); }
+    var mlist = document.getElementById('messageListID');
+    while (mlist.firstChild) { mlist.removeChild(mlist.firstChild); }
+
+    var header = document.createElement('header');
+    list.appendChild(header)
+    header.className = "glHeader";
+    header.innerText = "GAME LOG";
+
+    clearLists()
+    document.getElementById("gameDiv").style.display = "none";
+
+    gblPlayerDictionary = {};
+    gblActionManager = [];
+    gblMessageManager.clear()
+    gblGameCycles = 0;
+    gblMafiaKill = {};
+    gblMafiaKill2 = {};
+    
+    playerSetup()
+}
+
 function pendingCheck(){
     gblMessageManager.pendingCheck()
 }

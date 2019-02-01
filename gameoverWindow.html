@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Console</title>
+        <link rel="stylesheet" href="./assets/style.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="dragBar">
+                <div class="titleCSS">Ruger's DBMafia GM Tool</div>
+                <div class="minimCSS" id="minimize">-</div>
+                <div class="closeCSS" id="close">X</div>
+            </div>
+            <div class="ph glBorder" id="out">
+                <header class="cta cgl phHeader">Game Over</Header>
+                <div class="cta cgl phText">
+                    
+                </div>
+            </div>
+            <!--<button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" onclick='executeConsole()'>Execute</button>-->
+        </div>
+        <script>  
+            const {ipcRenderer} = require('electron');
+            ipcRenderer.on('gameover-conditions', (e, arg) => { 
+                if(arg.name) document.getElementById("out").innerText = "Winner: "+ arg.name +" the "+ arg.role +".\nthey won the game because "+ arg.message +".";
+            })
+        </script>
+        <script src="./assets/js/script.js"></script>
+    </body>
+</html>

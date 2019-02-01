@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Console</title>
+        <link rel="stylesheet" href="./assets/style.css">
+    </head>
+    <body class="bk-dark">
+        <div class="cta cgl phText drag">Do you really want to quit?</div>
+        <div class="flex-row">
+            <button class = "btn btn-remove mrlp5 mrrp5 fg1" id="consButton" onclick='quit()'>Quit</button>
+            <button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" onclick='playerList()'>Return to player setup</button>
+            <button class = "btn btn-add mrlp5 mrrp5 fg1" id="consButton" onclick='window.close()'>Cancel</button>
+        </div>
+        <script>  
+            const {ipcRenderer} = require('electron');
+            function quit(){ 
+                ipcRenderer.send('quit-app') 
+                window.close()
+            }
+            function playerList(){ 
+                ipcRenderer.send('return-to-playerlist') 
+                window.close()
+            }
+        </script>
+    </body>
+</html>

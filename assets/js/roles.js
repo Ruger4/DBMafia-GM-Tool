@@ -111,6 +111,28 @@ class Player {
     }
 
     actionTransfer(action){ this.actions.removeToOther(action, gblActionManager) }
+    transferActionSelection() { 
+        var ACS = document.getElementById(this.name + "ACID");
+        if(ACS.style.display !== "none" && ACS.value !== "No Action") {
+            var action = this.actions.returnContains(ACS.value);
+            var TGS = document.getElementsByName(this.name + "TGID");
+            switch (action.getType) {
+                case 0: break;
+                case 2: action.setTarget2 =TGS[1].value; 
+                default: action.setTarget = TGS[0].value; break;
+            }
+            this.actions.removeToOther(action, gblActionManager)
+        }
+        var REP = document.getElementById(this.name + "RPID");
+        if(REP.style.display !== "none" && REP.value !== "No Report") {
+            if(this.getSabotage){
+                var report = new PassItem(this.name, "Report");
+                report.setTarget = REP.value;
+                this.removeItem("Report");
+                gblActionManager.push(report)
+            } else gblMessageManager.push(new Message("!GameLog", this.name +" was unable to use their report due to sabotage."))
+        }
+    }
 
     init(){ return };
     reset(){
@@ -140,17 +162,21 @@ class Player {
     drawDay(){
         if(!this.alive){
             var entry = document.createElement('li');
+            document.getElementById("DeadListID").appendChild(entry)
             entry.className = "lir Dead";
             // push name to entry
             var name = document.createElement('div');
+            entry.appendChild(name);
             name.className = "list-name";
             name.innerText = this.name;
-            entry.appendChild(name);
             var role = document.createElement('div');
-            role.className = "list-role";
-            role.innerText = ":" + this.role;
             entry.appendChild(role);
-            document.getElementById("DeadListID").appendChild(entry)
+            role.className = "list-role";
+            role.innerText = this.role;
+            var text = document.createElement('div');
+            entry.appendChild(text);
+            text.className = "list-name";
+            text.innerText = "DEAD";
             return
         }
         // create li box
@@ -159,14 +185,14 @@ class Player {
         entry.className = "lir " + this.alignment[0];
         // push name to entry
         var name = document.createElement('div');
+        entry.appendChild(name);
         name.className = "list-name";
         name.innerText = this.name;
-        entry.appendChild(name);
         // push role to entry
         var role = document.createElement('div');
+        entry.appendChild(role);
         role.className = "list-role";
         role.innerText = ":" + this.role;
-        entry.appendChild(role);
 
         if(!this.items.includes("Gun")) return
 
@@ -215,22 +241,26 @@ class Player {
     drawNight(){
         if(!this.alive){
             var entry = document.createElement('li');
+            document.getElementById("DeadListID").appendChild(entry)
             entry.className = "lir Dead";
             // push name to entry
             var name = document.createElement('div');
+            entry.appendChild(name);
             name.className = "list-name";
             name.innerText = this.name;
-            entry.appendChild(name);
             var role = document.createElement('div');
+            entry.appendChild(role);
             role.className = "list-role";
             role.innerText = ":" + this.role;
-            entry.appendChild(role);
-            document.getElementById("DeadListID").appendChild(entry)
+            var text = document.createElement('div');
+            entry.appendChild(text);
+            text.className = "list-name";
+            text.innerText = "DEAD";
             return
         }
-        var olTarget = document.getElementById(this.alignment[0] + "ListID")
         // create li box
         var entry = document.createElement('li');
+        document.getElementById(this.alignment[0] + "ListID").appendChild(entry)
         entry.className = "lir " + this.alignment[0];
         // push name to entry
         var name = document.createElement('div');
@@ -290,7 +320,6 @@ class Player {
             entry.appendChild(testbtn);
         }////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        olTarget.appendChild(entry)
         // proceed to draw actions
         this.drawActions()
         this.drawReport()

@@ -197,6 +197,29 @@ class MessageManager {
             }
         }
     }
+    checkGameover(){
+        var villagers = [];
+        var mafia = [];
+        var nobody = [];
+        var cult = [];
+
+        for(var key in gblPlayerDictionary){
+            switch (kegblPlayerDictionary[key].getAlign) {
+                case "Village": villagers.push(key); break;
+                case "Mafia": mafia.push(key); break;
+                case "Nobody": nobody.push(key); break;
+                case "Cult": cult.push(key); break;
+            }
+        }
+
+        if(nobody.length > 0){
+
+        } else if( cult.length > 0){
+
+        } else {
+
+        }
+    }
 }
 class Message {
     constructor(tg, msg, pst){

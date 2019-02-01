@@ -14,7 +14,6 @@
             <div class = "cons-div flex-row">
                 <div class = "text-White mrlp5 mrrp5">Console:</div>
                 <input type="text" id="console" class = "form fg2 mrrp5" autofocus>
-                <!--<button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" onclick='executeConsole()'>Execute</button>-->
             </div>
             <div class="ph glBorder">
                 <header class="cta cgl phHeader">Console Command List</Header>
@@ -36,7 +35,7 @@
             const form = document.querySelector('#console');
             form.addEventListener("keyup", function(event) {
                 event.preventDefault();
-                if (event.keyCode === 13) executeConsole()//document.getElementById("consButton").click();
+                if (event.keyCode === 13) executeConsole()
             });
             function executeConsole(){
                 var form = document.getElementById("console");

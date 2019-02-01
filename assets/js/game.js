@@ -163,13 +163,41 @@ function renderGame(){
             gblMessageManager.push(new Message("!GMAction", "-> The village voted to lynch "+ victim +", proceed to night phase."))
             gblPlayerDictionary[victim].lynch()
             var booking = gblActionManager.find((act) => act.getName === "Book")
-            if(booking){
+            /*if(booking){
                 if(booking.getTarget === victim){
                     for(var key in gblPlayerDictionary) {
                         if(gblPlayerDictionary[key].getRole === "Bookie") {
                             gblPlayerDictionary[key].setBooking = gblGameCycles;
                             gblMessageManager.push(new Message("!GameLog", key +"'s booking was successful, the mafia may perform 2 kills tonight."))
                         }
+                        if(gblPlayerDictionary[key].getRole === "Lyncher") {
+                            if(gblPlayerDictionary[key].target === victim){
+                                const {ipcRenderer} = require('electron');
+                                ipcRenderer.send('request-gameover-window')
+                            }
+                        }
+                    }
+                }
+            }*/
+            if(gblPlayerDictionary[victim].getRole === "Fool") {
+                const {ipcRenderer} = require('electron');
+                ipcRenderer.send('request-gameover-window', {name: victim, role: "Fool", message: "they were lynched by the Village."})
+                gblMessageManager.push(new Message("!GameLog", victim +" the Fool wins the game, because the village lynched them."))
+            }
+            for(var key in gblPlayerDictionary) {
+                if(gblPlayerDictionary[key].getRole === "Bookie") {
+                    if(booking){
+                        if(booking.getTarget === victim){
+                            gblPlayerDictionary[key].setBooking = gblGameCycles;
+                            gblMessageManager.push(new Message("!GameLog", key +"'s booking was successful, the mafia may perform a bonus kill tonight."))
+                        }
+                    }
+                }
+                if(gblPlayerDictionary[key].getRole === "Lyncher") {
+                    if(gblPlayerDictionary[key].target === victim){
+                        const {ipcRenderer} = require('electron');
+                        ipcRenderer.send('request-gameover-window', {name: key, role: "Lyncher", message: "the Village lynched their target: "+ victim +"."})
+                        gblMessageManager.push(new Message("!GameLog", key +" the Lyncher wins the game, because the village lynched his target."))
                     }
                 }
             }
@@ -200,28 +228,10 @@ function renderGame(){
 
 function runGameCycle(){
     if(gblGameCycles & 1) {// night cycle
-        var plist = gblPlayerList.returnTargetList("Alive");
-        for(var i=0;i<plist.length;i++){
-            var ACS = document.getElementById(plist[i] + "ACID");
-            var player = gblPlayerDictionary[plist[i]];
-            if(ACS.style.display !== "none") {
-                var action = player.getActions.returnContains(ACS.value);
-                var TGS = document.getElementsByName(plist[i] + "TGID");
-                switch (action.getType) {
-                    case 0: break;
-                    case 2: action.setTarget2 =TGS[1].value; 
-                    default: action.setTarget = TGS[0].value; break;
-                }
-                player.actionTransfer(action)
-            }
-            var REP = document.getElementById(plist[i] + "RPID");
-            if(REP.style.display !== "none" && REP.value !== "No Report") {
-                var report = new PassItem(plist[i], "Report");
-                report.setTarget = REP.value;
-                player.removeItem("Report");
-                gblActionManager.push(report)
-            }
+        for(var key in gblPlayerDictionary){
+            gblPlayerDictionary[key].transferActionSelection()
         }
+        
         if(document.getElementById("!MafiaACID")) {
             if(document.getElementById("!MafiaACID").value !== "No Action" && gblMafiaKill.getActions.contains("Mafia Kill")) {
                 var TGS = document.getElementsByName("!MafiaTGID");
