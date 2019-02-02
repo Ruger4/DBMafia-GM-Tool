@@ -137,6 +137,7 @@ class MessageManager {
         var renderloc = document.getElementById("messageListID");
         for(var i=0; i<this.playerReturns.length; i++){
             var msg = this.playerReturns[i];
+            if(!gblPlayerDictionary[msg.getTarget].getAlive || this.deathReport.includes(msg.getTarget)) continue
             var entry = document.createElement('li');
             renderloc.appendChild(entry)
             entry.className = "lis glBorder";
@@ -198,10 +199,13 @@ class MessageManager {
         }
     }
     checkGameover(){
+        const {ipcRenderer} = require('electron');
+
         var villagers = [];
         var mafia = [];
         var nobody = [];
         var cult = [];
+        var winDeny = [];
 
         for(var key in gblPlayerDictionary){
             switch (kegblPlayerDictionary[key].getAlign) {
@@ -213,7 +217,29 @@ class MessageManager {
         }
 
         if(nobody.length > 0){
-
+            for(var key in gblPlayerDictionary){
+                if(gblPlayerDictionary[key].getRole)
+                var role = gblPlayerDictionary[key].getRole;
+                switch (role) {
+                    case "Arsonist": 
+                        if(villagers.length === 0 && mafia.length === 0 && cult.length === 0){
+                            ipcRenderer.send('request-gameover-window', {name: key, role: role, message: "everyone being dead!"})
+                            gblMessageManager.push(new Message("!GameLog", key +" won the game by killing everyone."))
+                        }; break;
+                    case "Blackmailed": 
+                        if(gblPlayerDictionary[key].getItems.includes("Evidence"))
+                    break;
+                    case "Bootlegger": break;
+                    case "Cult Leader": break;
+                    case "Hypnotist": break;
+                    case "Lover": break;
+                    case "Serial Killer": break;
+                    case "Survivor": break;
+                    case "Terrorist": break;
+                    case "Turncoat": break;
+                    default: break;
+                }
+            }
         } else if( cult.length > 0){
 
         } else {
