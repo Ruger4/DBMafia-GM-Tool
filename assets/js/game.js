@@ -181,7 +181,7 @@ function renderGame(){
             }*/
             if(gblPlayerDictionary[victim].getRole === "Fool") {
                 const {ipcRenderer} = require('electron');
-                ipcRenderer.send('request-gameover-window', {name: victim, role: "Fool", message: "they were lynched by the Village."})
+                ipcRenderer.send('request-gameover-window', {name: victim, role: "Fool", message: "them being lynched by the Village."})
                 gblMessageManager.push(new Message("!GameLog", victim +" the Fool wins the game, because the village lynched them."))
             }
             for(var key in gblPlayerDictionary) {
@@ -196,7 +196,7 @@ function renderGame(){
                 if(gblPlayerDictionary[key].getRole === "Lyncher") {
                     if(gblPlayerDictionary[key].target === victim){
                         const {ipcRenderer} = require('electron');
-                        ipcRenderer.send('request-gameover-window', {name: key, role: "Lyncher", message: "the Village lynched their target: "+ victim +"."})
+                        ipcRenderer.send('request-gameover-window', {name: key, role: "Lyncher", message: "the Village lynching their target who was "+ victim +"."})
                         gblMessageManager.push(new Message("!GameLog", key +" the Lyncher wins the game, because the village lynched his target."))
                     }
                 }

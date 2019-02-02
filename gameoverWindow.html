@@ -4,26 +4,32 @@
         <title>Console</title>
         <link rel="stylesheet" href="./assets/style.css">
     </head>
-    <body>
+    <body class="bk-dark">
         <div class="container">
-            <div class="dragBar">
-                <div class="titleCSS">Ruger's DBMafia GM Tool</div>
-                <div class="minimCSS" id="minimize">-</div>
-                <div class="closeCSS" id="close">X</div>
-            </div>
-            <div class="ph glBorder" id="out">
+            <div class="ph glBorder drag">
                 <header class="cta cgl phHeader">Game Over</Header>
-                <div class="cta cgl phText">
-                    
-                </div>
+                <div class="cta cgl phText" id="out"></div>
             </div>
-            <!--<button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" onclick='executeConsole()'>Execute</button>-->
+            <div class="flex-row">
+                <button class = "btn btn-remove mrlp5 mrrp5 fg1" id="consButton" onclick='quit()'>Quit</button>
+                <button class = "btn btn-run mrlp5 mrrp5 fg1" id="consButton" onclick='playerList()'>Return to player setup</button>
+                <button class = "btn btn-add mrlp5 mrrp5 fg1" id="consButton" onclick='cancel()'>Cancel</button>
+            </div>
         </div>
         <script>  
             const {ipcRenderer} = require('electron');
             ipcRenderer.on('gameover-conditions', (e, arg) => { 
-                if(arg.name) document.getElementById("out").innerText = "Winner: "+ arg.name +" the "+ arg.role +".\nthey won the game because "+ arg.message +".";
+                if(arg.name) document.getElementById("out").innerText = arg.name +" won the game as the "+ arg.role +".\nTheir win was due to "+ arg.message;
             })
+            function quit(){ 
+                ipcRenderer.send('quit-app')
+                ipcRenderer.send('hide-gameover')
+            }
+            function playerList(){ 
+                ipcRenderer.send('return-to-playerlist')
+                ipcRenderer.send('hide-gameover')
+            }
+            function cancel(){ ipcRenderer.send('hide-gameover') }
         </script>
         <script src="./assets/js/script.js"></script>
     </body>

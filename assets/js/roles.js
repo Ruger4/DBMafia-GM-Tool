@@ -111,7 +111,8 @@ class Player {
     }
 
     actionTransfer(action){ this.actions.removeToOther(action, gblActionManager) }
-    transferActionSelection() { 
+    transferActionSelection() {
+        if(!this.alive) return
         var ACS = document.getElementById(this.name + "ACID");
         if(ACS.style.display !== "none" && ACS.value !== "No Action") {
             var action = this.actions.returnContains(ACS.value);
@@ -1685,6 +1686,7 @@ const nsRoles = {
     }
     eventScan(){
         if(gblPlayerDictionary[this.target].getAlive) return
+        var list = gblPlayerList.clone().remove(this.name);
         for(var key in gblPlayerDictionary){
             if(gblPlayerDictionary[key].getAlign === "Mafia"){ list.remove(key) }
             else if(!gblPlayerDictionary[key].getAlive){ list.remove(key) }

@@ -21,7 +21,8 @@ app.on('ready', function(){
     } else {
         mainWindow = new BrowserWindow({ 
             width: 680, 
-            height: 600
+            height: 600,
+            show: false
         });
     }
     // load html into window
@@ -44,6 +45,12 @@ app.on('ready', function(){
         if(!quitWin) createQuitWin()
     })
 
+    createGameoverWin()
+
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show()
+    })
+
     mainWindow.on('closed', () => {
         mainWindow = null;
         consoleWin = null;
@@ -55,9 +62,13 @@ app.on('ready', function(){
 ipcMain.on('console-string', (e, arg) => { mainWindow.webContents.send('console-string', arg) })
 ipcMain.on('console-function-return', (e, arg) => { consoleWin.webContents.send('console-function-return', arg) })
 ipcMain.on('request-console-window', (e) => { if(!consoleWin) createConsoleWin() })
-ipcMain.on('request-gameover-window', (e, arg) => { if(!gameoverWin) createGameoverWin(arg) })
+ipcMain.on('request-gameover-window', (e, arg) => { 
+    gameoverWin.show()
+    gameoverWin.webContents.send('gameover-conditions', arg)
+})
 ipcMain.on('return-to-playerlist', (e) => { mainWindow.webContents.send('return-to-playerlist') })
 ipcMain.on('quit-app', (e) => { app.quit() })
+ipcMain.on('hide-gameover', (e) => { gameoverWin.hide() })
 
 // Handle creat add window
 function createConsoleWin(){
@@ -76,9 +87,13 @@ function createConsoleWin(){
     });
 }
 
-function createGameoverWin(arg){
+function createGameoverWin(){
     // Create new window
-    gameoverWin = new BrowserWindow({ width: 400, height: 300, frame: false, parent: mainWindow});
+    gameoverWin = new BrowserWindow({   width: 400, 
+                                        height: 140, 
+                                        frame: false,
+                                        show: false, 
+                                        parent: mainWindow});
     gameoverWin.title = "Console";
     // load html into window
     gameoverWin.loadURL(url.format({
@@ -86,8 +101,6 @@ function createGameoverWin(arg){
         protocol:'file:',
         slashes: true
     }));
-
-    gameoverWin.webContents.send('gameover-conditions', arg)
 
     // garbage collection handle
     gameoverWin.on('close', function(){
